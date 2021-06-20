@@ -1,0 +1,69 @@
+---
+title: "DSC640 R Plots"
+author: "Jonathon Scroggins"
+date: "6/17/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+setwd("C:/Users/Owner/Documents/Masters Program Data Science/DSC 640")
+library('readxl')
+library(ggplot2)
+library('readxl')
+library(RColorBrewer)
+library(tidyverse)
+library(dplyr)
+```
+```{r plots, echo = FALSE}
+dog_df <- read_excel("ex1-2/hotdog-contest-winners.xlsm",
+                     col_names = c("Year", "Winner", "Dogs", "Country", "New_Record"), skip = 1)
+ggplot(dog_df, aes(x = Year, y = Dogs)) + stat_summary(fun = "identity", geom = "bar", fill="peachpuff2") +
+  ggtitle('Number of Hot Dogs Eaten by Winner Per Year') +
+  theme(plot.title = element_text(hjust = 0.5,face = "bold", size = 10, color="red4"), 
+        axis.text.x = element_text(face="bold", color="red4"),
+        axis.text.y = element_text(face="bold", color="red4"),
+        axis.title.x = element_text(face="bold", color="red4"),
+        axis.title.y = element_text(face="bold", color="red4"))
+  
+ggplot(dog_df, aes(fill = Winner, x = Country, y = Dogs)) + geom_bar(stat = "identity") +
+  ggtitle('Number of Hot Dogs Eaten by Country') +
+  theme(plot.title = element_text(hjust = 0.5,face = "bold", size = 10, color="red4"), 
+        axis.text.x = element_text(face="bold", color="red4"),
+        axis.text.y = element_text(face="bold", color="red4"),
+        axis.title.x = element_text(face="bold", color="red4"),
+        axis.title.y = element_text(face="bold", color="red4"))
+
+
+
+
+ggplot(dog_df, aes(x = '', y = Dogs, fill = Country)) + geom_bar(stat = "identity", width = 1) +
+  coord_polar('y', start = 0) + theme_void() +
+  ggtitle('Hot Dogs Eaten by Country') +
+  theme(plot.title = element_text(hjust = 0.5,face = "bold", size = 20, color="red4"))
+```
+
+```{r donut, include=FALSE}
+donut <- data.frame(country = dog_df$Country, dogs = dog_df$Dogs)
+donut_group <- donut %>% group_by(donut$country)
+donut_group
+donut <- donut %>% arrange(country)
+donut$fraction = donut$dogs / sum(donut$dogs)
+donut$ymax = cumsum(donut$fraction)
+donut$ymin = c(0, head(donut$ymax, n=-1))
+```
+
+```{r donut plot, echo=FALSE}
+ggplot(donut, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=country))  + geom_rect(stat = "identity") +
+  coord_polar(theta = 'y') + xlim(c(2, 4)) +
+  theme_void() +
+  ggtitle('Hot Dogs Eaten by Country') +
+  theme(plot.title = element_text(hjust = 0.5,face = "bold", size = 20, color="red4"))
+
+ggplot(dog_df, aes(x = Year, y = Dogs)) + stat_summary(fun = "identity", geom = "line") +
+  ggtitle('Number of Hot Dogs Eaten by Winner Per Year') +
+  theme(plot.title = element_text(hjust = 0.5,face = "bold", size = 10, color="red4"), 
+        axis.text.x = element_text(face="bold", color="red4"),
+        axis.text.y = element_text(face="bold", color="red4"),
+        axis.title.x = element_text(face="bold", color="red4"),
+        axis.title.y = element_text(face="bold", color="red4"))
+```
