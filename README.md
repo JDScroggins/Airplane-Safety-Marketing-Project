@@ -1,4 +1,4 @@
-# Airplane-Safety-Marketing-Project
+# Airplane Safety Marketing Project
 ### This project explored the different marketing techniques for a campaign to promote airline safety using data.
 
 ### Premise
